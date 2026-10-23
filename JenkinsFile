@@ -1,0 +1,38 @@
+
+pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                echo 'Building the application...'
+                bat 'mvn -B clean package -DskipTests'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo 'Running unit tests...'
+                bat 'mvn -B test'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo 'Deploying the application...'
+                bat 'if not exist deployed mkdir deployed'
+                bat 'copy /Y target\\sample-ci-cd-1.0.jar deployed\\sample-ci-cd-1.0.jar'
+                echo 'Deployment completed successfully.'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'CI/CD Pipeline completed successfully!'
+        }
+        failure {
+            echo 'CI/CD Pipeline failed.'
+        }
+    }
+}
